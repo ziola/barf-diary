@@ -1,0 +1,10 @@
+{
+    "name": "barf-diary",
+    "version": "0.0.1",
+    "description": "",
+    "keywords": [],
+    "author": "Mateusz Wypysiak <mwypysiak@gmail.com>",
+    "dependencies": {
+      "node-fetch": "^2.6.0"
+    }
+  }
