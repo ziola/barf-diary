@@ -8,8 +8,10 @@ const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(
 
 const TABLES = {
   MEAT_TYPES: 'Meat-Types',
+  FREEZER: 'Freezer',
 };
 
 module.exports = {
   meatTypesTable: base.table(TABLES.MEAT_TYPES),
+  freezerTable: base.table(TABLES.FREEZER),
 };
