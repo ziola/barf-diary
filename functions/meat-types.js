@@ -14,6 +14,6 @@ exports.handler = async (event) => {
     const formattedMeatTypes = meatTypes.map(toMeatType);
     return formatResponse(formattedMeatTypes);
   } catch (err) {
-    return formatResponse(err.message, err.statusCode ?? 500);
+    return formatResponse(err.message, err.statusCode || 500);
   }
 };

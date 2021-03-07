@@ -33,7 +33,7 @@ async function getFreezerItems(event) {
     const formattedFreezerItems = frezeerItems.map(toFreezerItem);
     return formatResponse({ items: formattedFreezerItems });
   } catch (err) {
-    return formatResponse({ error: err.message }, err.statusCode ?? 500);
+    return formatResponse({ error: err.message }, err.statusCode || 500);
   }
 }
 
