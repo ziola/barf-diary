@@ -7,15 +7,29 @@ function toFreezerItem(airtableData) {
     date: airtableData.fields.Date,
     name: airtableData.fields.Name,
     amount: airtableData.fields.Amount,
-    meatTypeId: airtableData.fields.Type,
+    type: airtableData.fields.Type,
     meatTypeName: airtableData.fields['Name (from Type)'],
     size: airtableData.fields.Size,
   };
 }
 
+function fromFreezerItem(data) {
+  return {
+    Date: data.date,
+    Name: data.name,
+    Amount: data.amount,
+    Type: [data.type],
+    Size: data.size,
+  };
+}
+
 async function getFreezerItems(event) {
   try {
-    const frezeerItems = await freezerTable.select().firstPage();
+    const frezeerItems = await freezerTable
+      .select({
+        filterByFormula: 'NOT(Amount <= 0)',
+      })
+      .firstPage();
     const formattedFreezerItems = frezeerItems.map(toFreezerItem);
     return formatResponse({ items: formattedFreezerItems });
   } catch (err) {
@@ -27,10 +41,10 @@ async function addFreezerItems(event) {
   try {
     const itemFromRequest = JSON.parse(event.body);
     const createdItem = await freezerTable.create([
-      { fields: itemFromRequest },
+      { fields: fromFreezerItem(itemFromRequest) },
     ]);
     const freezerItems = createdItem.map(toFreezerItem);
-    return formatResponse({ items: freezerItems });
+    return formatResponse(freezerItems[0]);
   } catch (err) {
     return formatResponse({ error: err }, 500);
   }
@@ -47,7 +61,7 @@ async function removeFreezerItem(event) {
     const updatedItem = await freezerItem.updateFields({
       Amount: newAmount,
     });
-    return formatResponse({ item: toFreezerItem(updatedItem) });
+    return formatResponse(toFreezerItem(updatedItem));
   } catch (err) {
     console.log(err);
     return formatResponse({ error: err }, 500);
