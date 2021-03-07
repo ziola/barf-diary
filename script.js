@@ -11,7 +11,7 @@ function formatAmount({ amount = 1 } = {}) {
 function create$ItemContent(item) {
   return `<div>
             <p>${item.name}</p>
-            <p>${(item.meatTypeName ?? []).join(', ')}</p>
+            <p>${(item.meatTypeName || []).join(', ')}</p>
             <p>${item.amount} ${formatAmount(item)} ${
     item.size ? `po ${item.size} gram` : ''
   } z ${item.date}</p>
