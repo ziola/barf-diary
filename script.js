@@ -113,7 +113,7 @@ async function onRemoveFreezerItemClicked(event) {
       $item.parentNode.removeChild($item);
       return;
     }
-    $item.innerHTML = create$ItemContent(updatedItem.item);
+    $item.innerHTML = create$ItemContent(updatedItem);
   } catch (err) {
     alert('Nie udało się wyjąć z szyflady: ' + err.message);
   } finally {
