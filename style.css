@@ -1,5 +1,9 @@
 html {
   box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+  color: #9993bd;
 }
 
 *,
@@ -14,6 +18,11 @@ ul {
   list-style: none;
 }
 
+p {
+  margin: 0;
+  padding: 0;
+}
+
 input,
 select,
 select:focus,
@@ -23,14 +32,9 @@ textarea {
 }
 
 button {
-  /* dev styles */
-  background-color: grey;
-  margin: 0;
   font-size: 1em;
-  padding: 10px 5px;
-  border-radius: 10px;
+  padding: 16px 24px;
   border: none;
-  text-align: center;
 }
 
 input[type='number']::-webkit-inner-spin-button,
@@ -41,19 +45,10 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0;
 }
 
-html {
-  height: 100%;
-  overflow: hidden;
-}
-
 body {
-  /* dev styles */
   margin: 0;
-  background-color: aqua;
-
   height: 100%;
   overflow: hidden;
-
   /* grid container settings */
   display: grid;
   grid-template-columns: 1fr;
@@ -64,45 +59,71 @@ body {
     'footer';
 }
 
-header {
-  /* dev styles */
+/* header {
   background-color: bisque;
   padding: 10px;
 
   grid-area: header;
-}
+} */
 
 main {
-  /* dev styles */
-  background-color: chocolate;
-  padding: 10px;
-
   grid-area: main;
   overflow: auto;
+  padding: 8px;
 }
 
 main li {
-  /* dev styles */
-  margin: 10px 0px;
-  background-color: darksalmon;
-  padding: 10px;
-  height: 100px;
-  border: 1px solid grey;
-
   list-style-type: none;
+  background-color: #f4f7fe;
+  box-shadow: 0px 3px 4px 3px #c6d6fb;
+  border-radius: 8px;
+  margin: 0px 0px 16px;
+  padding: 0;
+}
+
+main li .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 16px 16px 8px;
+}
+
+main li .header h1,
+main li .header p {
+  font-size: large;
+  font-weight: 600;
+  margin: 0;
+}
+
+main li .details {
+  display: flex;
+  padding: 0px 16px;
+  justify-content: space-between;
+}
+
+main li .details p {
+  display: flex;
+  align-items: center;
+}
+
+main li .details svg {
+  margin-right: 8px;
 }
 
 main button {
-  border-radius: 50%;
-  height: 3rem;
-  width: 3rem;
+  width: 100%;
+  border-radius: 8px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  background-color: #9993bd;
+  font-weight: 600;
+  color: white;
+  margin: 16px 0px 0px;
 }
 
-footer {
-  /* dev styles */
+/* footer {
   background-color: darkkhaki;
   padding: 10px;
 
@@ -115,7 +136,6 @@ footer ul {
 }
 
 .modal {
-  /* dev styles */
   background-color: darkslateblue;
   padding: 10px;
 
@@ -146,4 +166,4 @@ footer ul {
 
 label {
   margin: 10px 0px;
-}
+} */
