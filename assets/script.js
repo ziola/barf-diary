@@ -29,7 +29,9 @@ function $itemContent(item) {
         ${mapMeatTypeToIcon(item)} ${item.name}
       </h1>
       <div class="item-details">
-        <div>${$icon(ICON_PACKAGE)} ${item.amount}</div>
+        <div>${$icon(ICON_PACKAGE)} <span class="amount">${
+    item.amount
+  }</span></div>
         ${item.size ? `<div>${$icon(ICON_SCALE)} ${item.size}</div>` : ''}
         <div>${$icon(ICON_SNOWFLAKE)} ${item.date}</div>
       </div>
@@ -57,8 +59,12 @@ async function freezerItems($container) {
 }
 
 async function onRemoveFreezerItemClicked(event) {
-  event.target.disabled = true;
-  const itemId = event.target.dataset.itemId;
+  const $button = event.target.closest('button');
+  if (!$button) {
+    return;
+  }
+  $button.disabled = true;
+  const itemId = $button.dataset.itemId;
   if (!itemId) {
     return;
   }
@@ -74,11 +80,12 @@ async function onRemoveFreezerItemClicked(event) {
       $item.parentNode.removeChild($item);
       return;
     }
-    $item.innerHTML = $itemContent(updatedItem);
+    const $amount = $item.querySelector('.amount');
+    $amount.innerHTML = updatedItem.amount;
   } catch (err) {
-    alert('Nie udało się wyjąć z szyflady: ' + err.message);
+    alert('Nie udało się wyjąć z szuflady: ' + err.message);
   } finally {
-    event.target.disabled = true;
+    $button.disabled = false;
   }
 }
 
