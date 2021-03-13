@@ -9,6 +9,7 @@ function toFreezerItem(airtableData) {
     amount: airtableData.fields.Amount,
     type: airtableData.fields.Type,
     meatTypeName: airtableData.fields['Name (from Type)'],
+    meatType: airtableData.fields['Type (from Type)'],
     size: airtableData.fields.Size,
   };
 }
