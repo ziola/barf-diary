@@ -29,6 +29,7 @@ async function getFreezerItems(event) {
     const frezeerItems = await freezerTable
       .select({
         filterByFormula: 'NOT(Amount <= 0)',
+        sort: [{ field: 'Type' }, { field: 'Date' }, { field: 'Amount' }],
       })
       .firstPage();
     const formattedFreezerItems = frezeerItems.map(toFreezerItem);
