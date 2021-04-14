@@ -9,11 +9,42 @@ const MEAT_TYPE_ICONS_MAP = {
   meat: `${ICONS_ROOT}/meat.svg`,
   bones: `${ICONS_ROOT}/bones.svg`,
   vegetables: `${ICONS_ROOT}/vegetables.svg`,
-  intestines: `${ICONS_ROOT}/stomach.svg`,
+  offal: `${ICONS_ROOT}/offal.svg`,
+  offalWithLiver: `${ICONS_ROOT}/offalWithLiver.svg`,
 };
 
+const API = function () {
+  async function takePackageFromFreezer(id) {
+    try {
+      const response = await fetch('/api/freezer', {
+        method: 'PATCH',
+        body: JSON.stringify({ id }),
+      });
+      return response.json();
+    } catch (err) {
+      alert('Nie udało się pobrać szuflady: ' + err.message);
+      return null;
+    }
+  }
+
+  async function fetchFreezerContent() {
+    try {
+      const response = await fetch('/api/freezer')
+      return response.json();
+    } catch (err) {
+      alert('Nie udało się pobrać szuflady: ' + err.message);
+      return [];
+    }
+  }
+
+  return {
+    takePackageFromFreezer,
+    fetchFreezerContent
+  }
+}();
+
 function mapMeatTypeToIcon(item) {
-  const meatType = (item.meatType || [])[0];
+  const meatType = item.meatType;
   const typeIcon = MEAT_TYPE_ICONS_MAP[meatType];
   return typeIcon ? $icon(typeIcon, 'icon-header') : '';
 }
@@ -25,16 +56,15 @@ function $icon(icon, className = 'icon') {
 function $itemContent(item) {
   return `
     <div class="item-content">
-      <h1 class="item-header">
-        ${mapMeatTypeToIcon(item)} ${item.name}
-      </h1>
       <div class="item-details">
-        <div>${$icon(ICON_PACKAGE)} <span class="amount">${
-    item.amount
-  }</span></div>
-        ${item.size ? `<div>${$icon(ICON_SCALE)} ${item.size}</div>` : ''}
-        <div>${$icon(ICON_SNOWFLAKE)} ${item.date}</div>
+        ${mapMeatTypeToIcon(item)} 
+        <div>
+          ${$icon(ICON_PACKAGE)} <span class="amount">${item.amount}</span>
+        </div>
       </div>
+      <h1 class="item-header">
+        ${item.name}
+      </h1>
     </div>
     <button type="button" data-item-id="${item.id}">${$icon(
     ICON_TAKE_OUT,
@@ -48,14 +78,19 @@ function to$Item(item) {
       </li>`;
 }
 
-async function freezerItems($container) {
-  try {
-    const freezerItems = await (await fetch('/api/freezer')).json();
-    const formattedItems = freezerItems.items.map(to$Item);
-    $container.innerHTML = formattedItems.join('');
-  } catch (err) {
-    alert('Nie udało się pobrać szuflady: ' + err.message);
-  }
+function to$ItemGroup([key, { name, items }]) {
+  const header = `
+  <h3>
+    <hr/>
+    <span>${name}</span>
+    </h3>
+  `;
+  return `<div id="${key}">${header}<ul>${items.map(to$Item).join('')}</ul></div>`;
+}
+
+async function fetchFreezerContent($container) {
+  const freezerItems = await API.fetchFreezerContent();
+  $container.innerHTML = Object.entries(freezerItems.groupped).map(to$ItemGroup).join('');
 }
 
 async function onRemoveFreezerItemClicked(event) {
@@ -68,31 +103,29 @@ async function onRemoveFreezerItemClicked(event) {
   if (!itemId) {
     return;
   }
-  try {
-    const updatedItem = await (
-      await fetch('/api/freezer', {
-        method: 'PATCH',
-        body: JSON.stringify({ id: itemId }),
-      })
-    ).json();
-    const $item = document.querySelector(`#${itemId}`);
-    if (updatedItem.amount <= 0) {
-      $item.parentNode.removeChild($item);
-      return;
-    }
-    const $amount = $item.querySelector('.amount');
-    $amount.innerHTML = updatedItem.amount;
-  } catch (err) {
-    alert('Nie udało się wyjąć z szuflady: ' + err.message);
-  } finally {
-    $button.disabled = false;
+  const updatedItem = await API.takePackageFromFreezer(itemId);
+  if (!updatedItem) {
+    return;
   }
+  const $item = document.querySelector(`#${itemId}`);
+  if (updatedItem.amount <= 0) {
+    $item.parentNode.removeChild($item);
+    const $group = document.querySelector(`#${updatedItem.meatType}`);
+    const $lis = $group.querySelector(`li`);
+    if (!$lis) {
+      $group.remove();
+    }
+    return;
+  }
+  const $amount = $item.querySelector('.amount');
+  $amount.innerHTML = updatedItem.amount;
+  $button.disabled = false;
 }
 
 async function runApp() {
   const $freezerList = document.querySelector('#freezer');
   $freezerList.addEventListener('click', onRemoveFreezerItemClicked);
-  await freezerItems($freezerList);
+  await fetchFreezerContent($freezerList);
 }
 
 document.addEventListener('DOMContentLoaded', runApp);

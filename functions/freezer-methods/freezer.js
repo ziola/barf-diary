@@ -4,23 +4,19 @@ const { formatResponse } = require('../helpers/response');
 function toFreezerItem(airtableData) {
   return {
     id: airtableData.id,
-    date: airtableData.fields.Date,
     name: airtableData.fields.Name,
     amount: airtableData.fields.Amount,
     type: airtableData.fields.Type,
     meatTypeName: airtableData.fields['Name (from Type)'],
-    meatType: airtableData.fields['Type (from Type)'],
-    size: airtableData.fields.Size,
+    meatType: airtableData.fields['Type (from Type)'][0],
   };
 }
 
 function fromFreezerItem(data) {
   return {
-    Date: data.date,
     Name: data.name,
     Amount: data.amount,
     Type: [data.type],
-    Size: data.size,
   };
 }
 
@@ -29,11 +25,22 @@ async function getFreezerItems(event) {
     const frezeerItems = await freezerTable
       .select({
         filterByFormula: 'NOT(Amount <= 0)',
-        sort: [{ field: 'Type' }, { field: 'Date' }, { field: 'Amount' }],
+        sort: [{ field: 'Type' }, { field: 'Amount' }],
       })
       .firstPage();
     const formattedFreezerItems = frezeerItems.map(toFreezerItem);
-    return formatResponse({ items: formattedFreezerItems });
+    const grouppedFreezerItems = frezeerItems.reduce((groups, aItem) => {
+      const item = toFreezerItem(aItem);
+      if (!groups[item.meatType]) {
+        groups[item.meatType] = {
+          name: item.meatTypeName,
+          items: []
+        };
+      }
+      groups[item.meatType].items.push(item);
+      return groups;
+    }, {});
+    return formatResponse({ items: formattedFreezerItems, groupped: grouppedFreezerItems });
   } catch (err) {
     return formatResponse({ error: err.message }, err.statusCode || 500);
   }
