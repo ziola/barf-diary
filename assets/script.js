@@ -1,3 +1,6 @@
+'use strict';
+
+
 const ICONS_ROOT = '/assets/icons';
 const ICON_SNOWFLAKE = `${ICONS_ROOT}/snowflake.svg`;
 const ICON_PACKAGE = `${ICONS_ROOT}/package.svg`;
@@ -129,3 +132,6 @@ async function runApp() {
 }
 
 document.addEventListener('DOMContentLoaded', runApp);
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
