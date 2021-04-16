@@ -14,6 +14,7 @@ const MEAT_TYPE_ICONS_MAP = {
   vegetables: `${ICONS_ROOT}/vegetables.svg`,
   offal: `${ICONS_ROOT}/offal.svg`,
   offalWithLiver: `${ICONS_ROOT}/offalWithLiver.svg`,
+  supplements: `${ICONS_ROOT}/supplements.svg`,
 };
 
 const API = function () {

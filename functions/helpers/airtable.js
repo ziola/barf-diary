@@ -7,7 +7,7 @@ const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(
 );
 
 const TABLES = {
-  MEAT_TYPES: 'Meat-Types',
+  MEAT_TYPES: 'ItemTypes',
   FREEZER: 'Freezer',
 };
 
