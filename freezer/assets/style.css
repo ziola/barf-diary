@@ -245,3 +245,8 @@ nav button {
   max-width: 250px;
   min-width: 200px;
 }
+
+#error button {
+  height: 40px;
+  width: 40px;
+}

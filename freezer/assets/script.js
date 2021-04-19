@@ -1,6 +1,6 @@
 "use strict";
 
-const ICONS_ROOT = "/assets/icons";
+const ICONS_ROOT = "/freezer/assets/icons";
 const ICON_PACKAGE = `${ICONS_ROOT}/package.svg`;
 const ICON_TAKE_OUT = `${ICONS_ROOT}/pet-bowl.svg`;
 
