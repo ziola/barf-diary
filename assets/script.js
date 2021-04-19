@@ -17,11 +17,15 @@ const STATIC_ELEMENTS = {};
 
 const API = (function () {
   async function takePackageFromFreezer(id) {
-    const response = await fetch("/api/freezer", {
-      method: "PATCH",
-      body: JSON.stringify({ id }),
-    });
-    return response.json();
+    try {
+      const response = await fetch("/api/freezer", {
+        method: "PATCH",
+        body: JSON.stringify({ id }),
+      });
+      return response.json();
+    } catch {
+      return null;
+    }
   }
 
   async function fetchFreezerContent() {
@@ -63,10 +67,9 @@ function $itemContent(item) {
         ${item.name}
       </h1>
     </div>
-    <button type="button" data-item-id="${item.id}">${$icon(
-    ICON_TAKE_OUT,
-    ""
-  )}</button>`;
+    <button type="button" data-item-id="${
+      item.id
+    }" class="item-take-out">${$icon(ICON_TAKE_OUT, "")}</button>`;
 }
 
 function to$Item(item) {
@@ -79,10 +82,10 @@ function to$ItemGroup([key, { name, items }]) {
   const header = `
   <h3>
     <hr/>
-    <span>${name}</span>
+    <button type="button" class="group-header" data-group-id="${key}">${name}</button>
     </h3>
   `;
-  return `<div id="${key}">${header}<ul>${items
+  return `<li>${header}<ul id="${key}">${items
     .map(to$Item)
     .join("")}</ul></div>`;
 }
@@ -113,16 +116,12 @@ function refreshData() {
     });
 }
 
-async function onRemoveFreezerItemClicked(event) {
-  const $button = event.target.closest("button");
-  if (!$button) {
-    return;
-  }
-  $button.disabled = true;
+async function onRemoveFreezerItemClicked($button) {
   const itemId = $button.dataset.itemId;
   if (!itemId) {
     return;
   }
+  $button.disabled = true;
   const updatedItem = await API.takePackageFromFreezer(itemId);
   if (!updatedItem) {
     return;
@@ -142,13 +141,38 @@ async function onRemoveFreezerItemClicked(event) {
   $button.disabled = false;
 }
 
+function onToggleGroup($button) {
+  const groupId = $button.dataset.groupId;
+  if (!groupId) {
+    return;
+  }
+  STATIC_ELEMENTS.list
+    .querySelector(`#${groupId}`)
+    .classList.toggle("group__collapsed");
+}
+
+async function onButtonClicked(event) {
+  const $button = event.target.closest("button");
+  if (!$button) {
+    return;
+  }
+  if ($button.classList.contains("item-take-out")) {
+    onRemoveFreezerItemClicked($button);
+    return;
+  }
+  if ($button.classList.contains("group-header")) {
+    onToggleGroup($button);
+    return;
+  }
+}
+
 async function runApp() {
   STATIC_ELEMENTS.header = document.querySelector(".types");
   STATIC_ELEMENTS.loader = document.querySelector("#loading");
   STATIC_ELEMENTS.error = document.querySelector("#error");
   STATIC_ELEMENTS.list = document.querySelector("#freezer");
 
-  STATIC_ELEMENTS.list.addEventListener("click", onRemoveFreezerItemClicked);
+  STATIC_ELEMENTS.list.addEventListener("click", onButtonClicked);
   const $refreshButton = document.querySelectorAll(".refresh-btn");
   $refreshButton.forEach((b) => b.addEventListener("click", refreshData));
   refreshData();

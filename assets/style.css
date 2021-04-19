@@ -34,6 +34,30 @@ img {
   width: 100%;
 }
 
+/* GANERIC BUTTON */
+button {
+  font-size: 1em;
+  border: none;
+  font-weight: 600;
+  margin: 0;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+button[disabled] {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+button:focus {
+  outline: none;
+}
+
 /* LIST ITEM */
 .item {
   background-color: var(--backgroud-color, #f4f7fe);
@@ -46,6 +70,11 @@ img {
   align-items: center;
 }
 
+.item-take-out {
+  width: 40px;
+  height: 40px;
+}
+
 .item-content {
   display: flex;
   flex: 1 1 auto;
@@ -54,7 +83,7 @@ img {
 
 .item-header {
   font-size: large;
-  font-weight: 600;
+  font-weight: 500;
   margin: 0 12px;
   padding: 0;
   display: flex;
@@ -83,28 +112,10 @@ img {
   width: 32px;
 }
 
-button {
-  font-size: 1em;
-  border: none;
-  font-weight: 600;
-  margin: 0;
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-}
-
-button[disabled] {
-  opacity: 0.25;
-  cursor: not-allowed;
-}
-
-button:focus {
-  outline: none;
+/* GROUP */
+.group__collapsed {
+  height: 0;
+  overflow: hidden;
 }
 
 /* GROUP SEPARATOR */
@@ -125,7 +136,7 @@ h3 hr {
   border-radius: 2px;
 }
 
-h3 span {
+h3 button {
   white-space: nowrap;
   position: absolute;
   left: 50%;
@@ -148,6 +159,11 @@ nav {
   padding: 16px;
   box-shadow: var(--shadow);
   z-index: 1;
+}
+
+nav button {
+  width: 40px;
+  height: 40px;
 }
 
 .types {
