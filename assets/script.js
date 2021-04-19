@@ -2,52 +2,48 @@
 
 const ICONS_ROOT = "/assets/icons";
 const ICON_PACKAGE = `${ICONS_ROOT}/package.svg`;
-const ICON_TAKE_OUT = `${ICONS_ROOT}/arrow-out.svg`;
+const ICON_TAKE_OUT = `${ICONS_ROOT}/pet-bowl.svg`;
 
 const MEAT_TYPE_ICONS_MAP = {
   liver: `${ICONS_ROOT}/liver.svg`,
   meat: `${ICONS_ROOT}/meat.svg`,
   bones: `${ICONS_ROOT}/bones.svg`,
-  vegetables: `${ICONS_ROOT}/vegetables.svg`,
   offal: `${ICONS_ROOT}/offal.svg`,
   offalWithLiver: `${ICONS_ROOT}/offalWithLiver.svg`,
   supplements: `${ICONS_ROOT}/supplements.svg`,
 };
 
+const STATIC_ELEMENTS = {};
+
 const API = (function () {
   async function takePackageFromFreezer(id) {
-    try {
-      const response = await fetch("/api/freezer", {
-        method: "PATCH",
-        body: JSON.stringify({ id }),
-      });
-      return response.json();
-    } catch (err) {
-      alert("Nie udało się pobrać szuflady: " + err.message);
-      return null;
-    }
+    const response = await fetch("/api/freezer", {
+      method: "PATCH",
+      body: JSON.stringify({ id }),
+    });
+    return response.json();
   }
 
   async function fetchFreezerContent() {
-    try {
-      const response = await fetch("/api/freezer");
-      return response.json();
-    } catch (err) {
-      alert("Nie udało się pobrać szuflady: " + err.message);
-      return [];
-    }
+    const response = await fetch("/api/freezer");
+    return response.json();
+  }
+
+  async function fetchFreezerItemTypes() {
+    const response = await fetch("/api/item-types");
+    return response.json();
   }
 
   return {
     takePackageFromFreezer,
     fetchFreezerContent,
+    fetchFreezerItemTypes,
   };
 })();
 
-function mapMeatTypeToIcon(item) {
-  const meatType = item.meatType;
-  const typeIcon = MEAT_TYPE_ICONS_MAP[meatType];
-  return typeIcon ? $icon(typeIcon, "icon-header") : "";
+function mapMeatTypeToIcon(type, iconClass = "icon-header") {
+  const typeIcon = MEAT_TYPE_ICONS_MAP[type];
+  return typeIcon ? $icon(typeIcon, iconClass) : "";
 }
 
 function $icon(icon, className = "icon") {
@@ -58,7 +54,7 @@ function $itemContent(item) {
   return `
     <div class="item-content">
       <div class="item-details">
-        ${mapMeatTypeToIcon(item)} 
+        ${mapMeatTypeToIcon(item.meatType)} 
         <div>
           ${$icon(ICON_PACKAGE)} <span class="amount">${item.amount}</span>
         </div>
@@ -91,11 +87,30 @@ function to$ItemGroup([key, { name, items }]) {
     .join("")}</ul></div>`;
 }
 
-async function fetchFreezerContent($container) {
-  const freezerItems = await API.fetchFreezerContent();
-  $container.innerHTML = Object.entries(freezerItems.groupped)
-    .map(to$ItemGroup)
-    .join("");
+function refreshData() {
+  STATIC_ELEMENTS.loader.classList.add("visible");
+  STATIC_ELEMENTS.error.classList.remove("visible");
+  STATIC_ELEMENTS.list.innerHTML = "";
+  STATIC_ELEMENTS.header.innerHTML = "";
+  Promise.all([API.fetchFreezerContent(), API.fetchFreezerItemTypes()])
+    .then(([groups, types]) => {
+      STATIC_ELEMENTS.header.innerHTML = types
+        .map(
+          ({ type }) =>
+            `<div>${mapMeatTypeToIcon(type, "")} ${
+              groups[type]?.amount ?? 0
+            }</div>`
+        )
+        .join("");
+      STATIC_ELEMENTS.list.innerHTML = Object.entries(groups)
+        .map(to$ItemGroup)
+        .join("");
+      STATIC_ELEMENTS.loader.classList.remove("visible");
+    })
+    .catch((error) => {
+      STATIC_ELEMENTS.loader.classList.remove("visible");
+      STATIC_ELEMENTS.error.classList.add("visible");
+    });
 }
 
 async function onRemoveFreezerItemClicked(event) {
@@ -128,9 +143,15 @@ async function onRemoveFreezerItemClicked(event) {
 }
 
 async function runApp() {
-  const $freezerList = document.querySelector("#freezer");
-  $freezerList.addEventListener("click", onRemoveFreezerItemClicked);
-  await fetchFreezerContent($freezerList);
+  STATIC_ELEMENTS.header = document.querySelector(".types");
+  STATIC_ELEMENTS.loader = document.querySelector("#loading");
+  STATIC_ELEMENTS.error = document.querySelector("#error");
+  STATIC_ELEMENTS.list = document.querySelector("#freezer");
+
+  STATIC_ELEMENTS.list.addEventListener("click", onRemoveFreezerItemClicked);
+  const $refreshButton = document.querySelectorAll(".refresh-btn");
+  $refreshButton.forEach((b) => b.addEventListener("click", refreshData));
+  refreshData();
 }
 
 document.addEventListener("DOMContentLoaded", runApp);

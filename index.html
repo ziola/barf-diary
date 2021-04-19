@@ -1,26 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/images/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="Zigi - Barf" />
+    <meta name="application-name" content="Zigi - Barf" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <meta name="apple-mobile-web-app-title" content="Zigi - Barf">
-  <meta name="application-name" content="Zigi - Barf">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
+    <title>BARF Zigiego</title>
+    <link rel="stylesheet" href="/assets/style.css" />
+    <script src="/assets/script.js"></script>
+  </head>
 
-  <title>BARF Zigiego</title>
-  <link rel="stylesheet" href="/assets/style.css" />
-  <script src="/assets/script.js"></script>
-</head>
-
-<body>
-  <ul id="freezer"></ul>
-</body>
-
+  <body>
+    <div id="loading">
+      <div>
+        <img src="assets/icons/freezer.svg" alt="Grzebię w lodówce" />
+        <p>Grzebię w lodówce...</p>
+      </div>
+    </div>
+    <nav>
+      <div class="types"></div>
+      <button type="button" class="refresh-btn">
+        <img src="assets/icons/freezer.svg" />
+      </button>
+    </nav>
+    <ul id="freezer"></ul>
+    <div id="error">
+      <div>
+        <img src="assets/icons/error.svg" alt="Rypło się" />
+        <p>Rypło się :(</p>
+        <button type="button" class="refresh-btn">
+          <img src="assets/icons/freezer.svg" />
+        </button>
+        <p>Kliknij, aby spróbować ponownie</p>
+      </div>
+    </div>
+  </body>
 </html>

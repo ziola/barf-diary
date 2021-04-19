@@ -1,10 +1,11 @@
-const { meatTypesTable } = require('./helpers/airtable');
-const { formatResponse } = require('./helpers/response');
+const { meatTypesTable } = require("./helpers/airtable");
+const { formatResponse } = require("./helpers/response");
 
 function toMeatType(airtableData) {
   return {
     id: airtableData.id,
     name: airtableData.fields.Name,
+    type: airtableData.fields.Id,
   };
 }
 
