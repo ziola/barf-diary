@@ -1,10 +1,7 @@
-'use strict';
+"use strict";
 
-
-const ICONS_ROOT = '/assets/icons';
-const ICON_SNOWFLAKE = `${ICONS_ROOT}/snowflake.svg`;
+const ICONS_ROOT = "/assets/icons";
 const ICON_PACKAGE = `${ICONS_ROOT}/package.svg`;
-const ICON_SCALE = `${ICONS_ROOT}/scale.svg`;
 const ICON_TAKE_OUT = `${ICONS_ROOT}/arrow-out.svg`;
 
 const MEAT_TYPE_ICONS_MAP = {
@@ -17,43 +14,43 @@ const MEAT_TYPE_ICONS_MAP = {
   supplements: `${ICONS_ROOT}/supplements.svg`,
 };
 
-const API = function () {
+const API = (function () {
   async function takePackageFromFreezer(id) {
     try {
-      const response = await fetch('/api/freezer', {
-        method: 'PATCH',
+      const response = await fetch("/api/freezer", {
+        method: "PATCH",
         body: JSON.stringify({ id }),
       });
       return response.json();
     } catch (err) {
-      alert('Nie udało się pobrać szuflady: ' + err.message);
+      alert("Nie udało się pobrać szuflady: " + err.message);
       return null;
     }
   }
 
   async function fetchFreezerContent() {
     try {
-      const response = await fetch('/api/freezer')
+      const response = await fetch("/api/freezer");
       return response.json();
     } catch (err) {
-      alert('Nie udało się pobrać szuflady: ' + err.message);
+      alert("Nie udało się pobrać szuflady: " + err.message);
       return [];
     }
   }
 
   return {
     takePackageFromFreezer,
-    fetchFreezerContent
-  }
-}();
+    fetchFreezerContent,
+  };
+})();
 
 function mapMeatTypeToIcon(item) {
   const meatType = item.meatType;
   const typeIcon = MEAT_TYPE_ICONS_MAP[meatType];
-  return typeIcon ? $icon(typeIcon, 'icon-header') : '';
+  return typeIcon ? $icon(typeIcon, "icon-header") : "";
 }
 
-function $icon(icon, className = 'icon') {
+function $icon(icon, className = "icon") {
   return `<img src="${icon}" class="${className}" />`;
 }
 
@@ -72,7 +69,7 @@ function $itemContent(item) {
     </div>
     <button type="button" data-item-id="${item.id}">${$icon(
     ICON_TAKE_OUT,
-    ''
+    ""
   )}</button>`;
 }
 
@@ -89,16 +86,20 @@ function to$ItemGroup([key, { name, items }]) {
     <span>${name}</span>
     </h3>
   `;
-  return `<div id="${key}">${header}<ul>${items.map(to$Item).join('')}</ul></div>`;
+  return `<div id="${key}">${header}<ul>${items
+    .map(to$Item)
+    .join("")}</ul></div>`;
 }
 
 async function fetchFreezerContent($container) {
   const freezerItems = await API.fetchFreezerContent();
-  $container.innerHTML = Object.entries(freezerItems.groupped).map(to$ItemGroup).join('');
+  $container.innerHTML = Object.entries(freezerItems.groupped)
+    .map(to$ItemGroup)
+    .join("");
 }
 
 async function onRemoveFreezerItemClicked(event) {
-  const $button = event.target.closest('button');
+  const $button = event.target.closest("button");
   if (!$button) {
     return;
   }
@@ -121,18 +122,18 @@ async function onRemoveFreezerItemClicked(event) {
     }
     return;
   }
-  const $amount = $item.querySelector('.amount');
+  const $amount = $item.querySelector(".amount");
   $amount.innerHTML = updatedItem.amount;
   $button.disabled = false;
 }
 
 async function runApp() {
-  const $freezerList = document.querySelector('#freezer');
-  $freezerList.addEventListener('click', onRemoveFreezerItemClicked);
+  const $freezerList = document.querySelector("#freezer");
+  $freezerList.addEventListener("click", onRemoveFreezerItemClicked);
   await fetchFreezerContent($freezerList);
 }
 
-document.addEventListener('DOMContentLoaded', runApp);
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
+document.addEventListener("DOMContentLoaded", runApp);
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js");
 }
