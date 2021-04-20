@@ -85,9 +85,17 @@ function to$ItemGroup([key, { name, items }]) {
     <button type="button" class="group-header" data-group-id="${key}">${name}</button>
     </h3>
   `;
-  return `<li>${header}<ul id="${key}">${items
+  return `<li id="${key}-group">${header}<ul>${items
     .map(to$Item)
     .join("")}</ul></div>`;
+}
+
+function to$HeaderItem(groups) {
+  return ({ type }) => {
+    const amount = groups[type]?.amount ?? 0;
+    const $icon = mapMeatTypeToIcon(type, "");
+    return `<div id="${type}-total" data-amount="${amount}">${$icon} <span class="amount">${amount}</span></div>`;
+  };
 }
 
 function refreshData() {
@@ -98,12 +106,7 @@ function refreshData() {
   Promise.all([API.fetchFreezerContent(), API.fetchFreezerItemTypes()])
     .then(([groups, types]) => {
       STATIC_ELEMENTS.header.innerHTML = types
-        .map(
-          ({ type }) =>
-            `<div>${mapMeatTypeToIcon(type, "")} ${
-              groups[type]?.amount ?? 0
-            }</div>`
-        )
+        .map(to$HeaderItem(groups))
         .join("");
       STATIC_ELEMENTS.list.innerHTML = Object.entries(groups)
         .map(to$ItemGroup)
@@ -127,11 +130,18 @@ async function onRemoveFreezerItemClicked($button) {
     return;
   }
   const $item = document.querySelector(`#${itemId}`);
+  // update header start
+  // TODO reafactor to separate function
+  const $groupTotal = document.querySelector(`#${updatedItem.meatType}-total`);
+  $groupTotal.dataset.amount = $groupTotal.dataset.amount - 1;
+  const $groupAmount = $groupTotal.querySelector(`.amount`);
+  $groupAmount.innerHTML = $groupTotal.dataset.amount;
+  // update header end
   if (updatedItem.amount <= 0) {
     $item.parentNode.removeChild($item);
-    const $group = document.querySelector(`#${updatedItem.meatType}`);
-    const $lis = $group.querySelector(`li`);
-    if (!$lis) {
+    const $group = document.querySelector(`#${updatedItem.meatType}-group`);
+    const $items = $group.querySelector(`li`);
+    if (!$items) {
       $group.remove();
     }
     return;
