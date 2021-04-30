@@ -157,7 +157,7 @@ function onToggleGroup($button) {
     return;
   }
   STATIC_ELEMENTS.list
-    .querySelector(`#${groupId}`)
+    .querySelector(`#${groupId}-group ul`)
     .classList.toggle("group__collapsed");
 }
 
