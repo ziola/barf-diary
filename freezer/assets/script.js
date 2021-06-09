@@ -98,6 +98,12 @@ function to$HeaderItem(groups) {
   };
 }
 
+function prepareGroups(groups, types) {
+  return types
+    .map(({ type }) => groups.find(([key]) => key === type))
+    .filter(Boolean);
+}
+
 function refreshData() {
   STATIC_ELEMENTS.loader.classList.add("visible");
   STATIC_ELEMENTS.error.classList.remove("visible");
@@ -108,12 +114,16 @@ function refreshData() {
       STATIC_ELEMENTS.header.innerHTML = types
         .map(to$HeaderItem(groups))
         .join("");
-      STATIC_ELEMENTS.list.innerHTML = Object.entries(groups)
+      STATIC_ELEMENTS.list.innerHTML = prepareGroups(
+        Object.entries(groups),
+        types
+      )
         .map(to$ItemGroup)
         .join("");
       STATIC_ELEMENTS.loader.classList.remove("visible");
     })
     .catch((error) => {
+      console.error(error);
       STATIC_ELEMENTS.loader.classList.remove("visible");
       STATIC_ELEMENTS.error.classList.add("visible");
     });

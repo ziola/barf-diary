@@ -28,7 +28,6 @@ async function getFreezerItems(event) {
         sort: [{ field: "Type" }, { field: "Amount" }],
       })
       .firstPage();
-    const formattedFreezerItems = frezeerItems.map(toFreezerItem);
     const grouppedFreezerItems = frezeerItems.reduce((groups, aItem) => {
       const item = toFreezerItem(aItem);
       if (!groups[item.meatType]) {

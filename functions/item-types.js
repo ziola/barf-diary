@@ -11,7 +11,11 @@ function toMeatType(airtableData) {
 
 exports.handler = async (event) => {
   try {
-    const meatTypes = await meatTypesTable.select().firstPage();
+    const meatTypes = await meatTypesTable
+      .select({
+        sort: [{ field: "Order" }],
+      })
+      .firstPage();
     const formattedMeatTypes = meatTypes.map(toMeatType);
     return formatResponse(formattedMeatTypes);
   } catch (err) {
